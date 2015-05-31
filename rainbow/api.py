@@ -1,7 +1,6 @@
 
 def deploy():
     print "deploying artifact"
-    pass
 
 def _roll_to_release(release):
     print "cutting-over to release: {release}".format(release=release)
