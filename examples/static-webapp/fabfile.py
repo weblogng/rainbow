@@ -15,8 +15,8 @@ def hostname():
     run('hostname')
 
 @task(name="deploy-next")
-def deploy_next():
-    deploy()
+def deploy_next(artifact_name):
+    deploy(artifact_name=artifact_name, remote_path="/opt/static-webapp")
 
 @task(name="roll-forward")
 def roll_forward():
