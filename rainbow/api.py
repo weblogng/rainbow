@@ -1,5 +1,6 @@
 from fabric.state import env
 from fabtools.require.files import (directory, put)
+from fabtools.utils import (run_as_root)
 from fabric.api import (cd, run)
 
 #alias fabric's env for simple unit-testing of the rainbow api
@@ -26,6 +27,7 @@ def deploy(artifact_name, remote_path):
 
     with cd(path=remote_path):
         run("tar -xvf {artifact_name} -C {dest_dir}".format(dest_dir=dest_dir, artifact_name=artifact_name))
+        run_as_root("ln -nsf {dest_dir} next".format(dest_dir=dest_dir))
 
 def _roll_to_release(release):
     print "cutting-over to release: {release}".format(release=release)
