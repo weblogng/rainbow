@@ -10,6 +10,16 @@ from mock import patch, call
 @patch('fabric.api.cd')
 class DeployTestCase(unittest.TestCase):
 
+    def test_deploy_is_rejected_for_reserved_release_names(self, cd, run, run_as_root, put, directory):
+        from rainbow import api
+        api.fabric_env.host_string = 'unit-test'
+        api.fabric_env.user = 'unit'
+
+        for rel_name in ['prev', 'current', 'next']:
+            print rel_name
+            with self.assertRaises(ValueError):
+                api.deploy("{rel_name}.tar.gz".format(rel_name=rel_name), "/some/path")
+
     def test_deploy_puts_the_specified_artifact_to_the_remote_server_and_extracts_it(self, cd, run, run_as_root, put,
                                                                                      directory):
         from rainbow import api

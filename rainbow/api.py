@@ -14,10 +14,17 @@ def deploy(artifact_name, remote_path):
 
     dest_dir = remote_path + "/"
 
-    if artifact_name.endswith(".tar.gz"):
-        dest_dir = dest_dir + artifact_name[:(-1 * len(".tar.gz"))]
+    file_extension = '.tar.gz'
+    bare_artifact_name = artifact_name
+    if artifact_name.endswith(file_extension):
+        bare_artifact_name = artifact_name[:(-1 * len(file_extension))]
+        dest_dir = dest_dir + bare_artifact_name
     else:
         dest_dir = dest_dir + artifact_name
+
+    if bare_artifact_name in ['prev', 'current', 'next']:
+        raise ValueError("sorry, {artifact_name} is not a legal artifact name because it collides "
+                         "with a word reserved for symbolic links used by rainbow".format(artifact_name=artifact_name))
 
     # note: the request to create the remote_path should be superfluous since dest_dir contains it
     directory(path=remote_path, use_sudo=True)
