@@ -82,3 +82,34 @@ class DeployTestCase(unittest.TestCase):
             call("ln -nsf {next_rel_dir} current".format(**locals()))
         ])
 
+    @patch('rainbow.api.run_as_root')
+    @patch('rainbow.api.run')
+    @patch('rainbow.api.cd')
+    def test_roll_back_updates_sym_links(self, cd, run, run_as_root):
+        from rainbow import api
+
+        api.fabric_env.host_string = 'unit-test'
+        api.fabric_env.user = 'unit'
+
+        remote_path = "/opt/software"
+
+        prev_rel_dir = remote_path + "/static-webapp.v1"
+        curr_rel_dir = remote_path + "/static-webapp.v2"
+
+        run_returns = [curr_rel_dir, prev_rel_dir, prev_rel_dir]
+        def side_effect(*args):
+            return run_returns.pop(0)
+
+        run.side_effect = side_effect
+
+        api.roll_to_prev_release(remote_path)
+
+        cd.assert_called_with(path=remote_path)
+        run.assert_has_calls([
+            call("readlink -f {remote_path}/current".format(**locals())),
+            call("readlink -f {remote_path}/prev".format(**locals())),
+        ])
+        run_as_root.assert_has_calls([
+            call("ln -nsf {prev_rel_dir} current".format(**locals()))
+        ])
+

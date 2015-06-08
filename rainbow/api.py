@@ -41,14 +41,14 @@ def _roll_to_release(release, remote_path):
 
     with cd(path=remote_path):
         print "changed to {remote_path}".format(remote_path=remote_path)
-        curr_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
-        next_rel = run("readlink -f {remote_path}/next".format(remote_path=remote_path))
+        current_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
+        target_rel = run("readlink -f {remote_path}/{release}".format(remote_path=remote_path, release=release))
 
-        run_as_root("ln -nsf {curr_rel} prev".format(curr_rel=curr_rel))
-        run_as_root("ln -nsf {next_rel} current".format(next_rel=next_rel))
+        run_as_root("ln -nsf {current_rel} prev".format(current_rel=current_rel))
+        run_as_root("ln -nsf {target_rel} current".format(target_rel=target_rel))
 
-        curr_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
-        print "updated current release to {curr_rel}".format(curr_rel=curr_rel)
+        current_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
+        print "updated current release to {current_rel}".format(current_rel=current_rel)
 
 
 def roll_to_next_release(remote_path):
