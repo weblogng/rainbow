@@ -2,15 +2,9 @@ import unittest
 
 from mock import patch, call
 
-
-@patch('fabtools.require.files.directory')
-@patch('fabtools.require.files.put')
-@patch('fabtools.utils.run_as_root')
-@patch('fabric.api.run')
-@patch('fabric.api.cd')
 class DeployTestCase(unittest.TestCase):
 
-    def test_deploy_is_rejected_for_reserved_release_names(self, cd, run, run_as_root, put, directory):
+    def test_deploy_is_rejected_for_reserved_release_names(self):
         from rainbow import api
         api.fabric_env.host_string = 'unit-test'
         api.fabric_env.user = 'unit'
@@ -20,6 +14,11 @@ class DeployTestCase(unittest.TestCase):
             with self.assertRaises(ValueError):
                 api.deploy("{rel_name}.tar.gz".format(rel_name=rel_name), "/some/path")
 
+    @patch('rainbow.api.directory')
+    @patch('rainbow.api.put')
+    @patch('rainbow.api.run_as_root')
+    @patch('rainbow.api.run')
+    @patch('rainbow.api.cd')
     def test_deploy_puts_the_specified_artifact_to_the_remote_server_and_extracts_it(self, cd, run, run_as_root, put,
                                                                                      directory):
         from rainbow import api
@@ -50,7 +49,11 @@ class DeployTestCase(unittest.TestCase):
             call("ln -nsf {dest_dir} next".format(**locals()))
         ])
 
-    def test_roll_forward_updates_sym_links(self, cd, run, run_as_root, put, directory):
+
+    @patch('rainbow.api.run_as_root')
+    @patch('rainbow.api.run')
+    @patch('rainbow.api.cd')
+    def test_roll_forward_updates_sym_links(self, cd, run, run_as_root):
         from rainbow import api
 
         api.fabric_env.host_string = 'unit-test'
