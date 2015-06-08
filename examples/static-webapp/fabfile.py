@@ -20,8 +20,8 @@ def deploy_next(artifact_name):
 
 @task(name="roll-forward")
 def roll_forward():
-    roll_to_next_release()
+    roll_to_next_release(remote_path="/opt/static-webapp")
 
 @task(name="roll-back")
 def roll_backward():
-    roll_to_prev_release()
+    roll_to_prev_release(remote_path="/opt/static-webapp")

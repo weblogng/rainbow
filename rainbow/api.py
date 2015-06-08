@@ -29,11 +29,23 @@ def deploy(artifact_name, remote_path):
         run("tar -xvf {artifact_name} -C {dest_dir}".format(dest_dir=dest_dir, artifact_name=artifact_name))
         run_as_root("ln -nsf {dest_dir} next".format(dest_dir=dest_dir))
 
-def _roll_to_release(release):
+def _roll_to_release(release, remote_path):
     print "cutting-over to release: {release}".format(release=release)
 
-def roll_to_next_release():
-    _roll_to_release("next")
+    with cd(path=remote_path):
+        print "changed to {remote_path}".format(remote_path=remote_path)
+        curr_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
+        next_rel = run("readlink -f {remote_path}/next".format(remote_path=remote_path))
 
-def roll_to_prev_release():
-    _roll_to_release("prev")
+        run_as_root("ln -nsf {curr_rel} prev".format(curr_rel=curr_rel))
+        run_as_root("ln -nsf {next_rel} current".format(next_rel=next_rel))
+
+        curr_rel = run("readlink -f {remote_path}/current".format(remote_path=remote_path))
+        print "updated current release to {curr_rel}".format(curr_rel=curr_rel)
+
+
+def roll_to_next_release(remote_path):
+    _roll_to_release("next", remote_path)
+
+def roll_to_prev_release(remote_path):
+    _roll_to_release("prev", remote_path)
