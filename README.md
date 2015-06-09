@@ -17,18 +17,23 @@ Since Rainbow is an api, the resulting fabfile integration can look however you 
 
 Deploy the next release to production:
 
-`fab deploy-next prod static-webapp-2015-04-18_20-24-25_UTC.35ccbf3.tar.gz`
+`fab prod deploy-next:artifact_name=rainbow-test.c7821a2.tar.gz`
 
 Roll-forward (cut-over) to the 'next' release:
 
-`fab roll-forward prod`
+`fab prod roll-forward`
 
 Roll-back (cut-over) to the 'previous' release:
 
-`fab roll-back prod`
+`fab prod roll-back`
 
 # Credits #
 
 Rainbow was heavily-inspired by:
 
 * [gitric](https://github.com/dbravender/gitric)
+
+Rainbow is:
+ 
+* built-on the terrific [Fabric](http://www.fabfile.org/) library for ssh and system management tasks 
+* made much-simpler by [fabtools](https://fabtools.readthedocs.org) convenience functions on top of Fabric
